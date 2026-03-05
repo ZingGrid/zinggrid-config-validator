@@ -1,0 +1,17 @@
+{
+  "caption": "Invalid ZingGrid Example",
+  "filter": "name",
+  "search": true,
+  "sorter": true,
+  "compactLayout": true,
+  "columns": [
+    { "index": "name", "header": "First Name", "sort-asc": true},
+    { "index": "age" }
+  ],
+  "data": [
+    { "name": "Alice", "age": 30 },
+    { "name": "Bob", "age": 25 },
+    { "name": "Cally", "age": 27 },
+    { "name": "Daniel", "age": 35 }
+  ]
+}
