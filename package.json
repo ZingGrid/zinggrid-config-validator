@@ -7,8 +7,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "validate:config": "node dist/cli/validate-config.js",
-    "dev:validate": "ts-node cli/validate-config.ts"
+    "validate:config": "node dist/cli/validate-config.js"
   },
   "exports": {
     ".": {
