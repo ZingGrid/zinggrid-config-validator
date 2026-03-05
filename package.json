@@ -1,5 +1,5 @@
 {
-  "name": "zinggrid-zod-validator",
+  "name": "zinggrid-config-validator",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
