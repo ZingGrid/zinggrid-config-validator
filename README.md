@@ -23,7 +23,7 @@ npm run build
 ## Using the Validator Function
 
 ```js
-import { validateZingGridConfig } from "zinggrid-validator";
+import { validateZingGridConfig } from "zinggrid-config-validator";
 import * as z from "zod";
 
 // Valid config should pass
@@ -78,11 +78,13 @@ If invalid:
 
 ```
 src/
-  schema.ts
-  validator.ts
-  types.ts
-cli/
-  validate-config.ts
+  schema/
+    zinggrid.schema.ts
+  validator/
+    validator.ts
+    types.ts
+  cli
+    validate-config.ts
 examples/
   valid-config.json
 ```

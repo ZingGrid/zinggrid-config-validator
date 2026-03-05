@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { validateZingGridConfig } from '../src/validator/validate.js';
+import { validateZingGridConfig } from '../validator/validate.js';
 import * as z from "zod";
 
 const filePath = process.argv[2];

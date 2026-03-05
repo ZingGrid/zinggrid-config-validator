@@ -1,4 +1,5 @@
-import { validateZingGridConfig } from '../dist/src/validator/validate.js';
+import { validateZingGridConfig } from '../dist/validator/validate.js';
+// import { validateZingGridConfig } from 'zinggrid-config-validator';
 import * as z from 'zod';
 
 const validConfig = {
