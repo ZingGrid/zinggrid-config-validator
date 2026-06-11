@@ -101,6 +101,8 @@ enum FilterEnum {
   menu = "menu",
   inline = "inline",
   both = "both",
+  summary = "summary",
+  all = "all",
   disabled = "disabled",
 }
 
@@ -147,6 +149,20 @@ enum FilterMenuAreasEnum {
 enum FilterOnEnum {
   raw = "raw",
   rendered = "rendered",
+}
+
+enum FilterSummaryChartEnum {
+  bar = "bar",
+  default = "default",
+  histogram = "histogram",
+  pie = "pie",
+}
+
+enum FilterSummaryNodeSortEnum {
+  alphabetical = "alphabetical",
+  ''count' = "'count",
+  value = "value",
+  none = "none",
 }
 
 enum FilterTriggerEnum {
@@ -406,10 +422,10 @@ enum ThemeEnum {
 }
 
 export const ZingGridSchema = z.object({
-  aggregate: z.nativeEnum(AggregateEnum).or(z.string())
+  aggregate: z.enum(AggregateEnum).or(z.string())
     .optional()
     .describe("Adds aggregate column and sets the type-aggregate-value to the specified value"),
-  align: z.nativeEnum(AlignEnum)
+  align: z.enum(AlignEnum)
     .optional()
     .describe("Aligns the contents of the grid's text"),
   batchEdit: z.boolean()
@@ -441,28 +457,28 @@ export const ZingGridSchema = z.object({
     .strict()
     .optional()
     .describe("Specifies the defined `<zg-card>` of the grid. More appropriate to use `<zg-card>` in most cases or set the property programmatically."),
-  cellBreak: z.nativeEnum(CellBreakEnum)
+  cellBreak: z.enum(CellBreakEnum)
     .optional()
     .describe("The type of `word-break` style for body cells. When not set, `cell-break` style is `normal` by default. If the width of a column is set, `cell-break` is `word` by default. To overwrite `cell-break` for cells in a specific column, set `cell-break` for that column."),
   cellClass: z.string()
     .optional()
     .describe("Adds a class to each `<zg-cell>` in the grid. This attribute can be applied to both `<zing-grid>` or `<zg-column>`. If the attribute is applied to both, `<zg-column>`'s `cell-class` overwrites `<zing-grid>`'s `cell-class`. To set a class conditionally, set `cell-class` to the name of the function, which takes in the arguments: `cellData`, `domContainer`, `cellObject`."),
-  cellEditor: z.nativeEnum(CellEditorEnum).or(z.boolean())
+  cellEditor: z.enum(CellEditorEnum).or(z.boolean())
     .optional()
     .describe("Turns cell editing on or off. Automatically turned on when setting `editor` or `editor-controls`."),
   cellFocus: z.enum(CellEditorEnum)
     .optional()
     .describe("Turns off keyboard nav cell focus if set to disabled"),
-  cellTooltipAction: z.nativeEnum(CellTooltipActionEnum)
+  cellTooltipAction: z.enum(CellTooltipActionEnum)
     .optional()
     .describe("Sets the execution method of custom 'icon' type tooltips to either activate on hover or click of the icon"),
   cellTooltipDelay: z.number()
     .optional()
     .describe("Sets the hover delay in milliseconds before displaying the tooltip. If delay is not specified, it is 1000ms on cell tooltips without an icon and 0ms on cell tooltips with an icon."),
-  cellTooltipIcon: z.nativeEnum(CellTooltipIconEnum)
+  cellTooltipIcon: z.enum(CellTooltipIconEnum)
     .optional()
     .describe("Specifies the icon to use for the info column types"),
-  cellTooltipPosition: z.nativeEnum(CellTooltipPositionEnum)
+  cellTooltipPosition: z.enum(CellTooltipPositionEnum)
     .optional()
     .describe("Sets the tooltip-position for the cell"),
   cellTooltipRenderer: z.string()
@@ -471,7 +487,7 @@ export const ZingGridSchema = z.object({
   cellTooltipTemplate: z.string()
     .optional()
     .describe("Points to an external template element to be used as the template for the tooltip display"),
-  cellTooltipType: z.nativeEnum(CellTooltipTypeEnum)
+  cellTooltipType: z.enum(CellTooltipTypeEnum)
     .optional()
     .describe("Sets the style to use for the tooltips. Uses the `default` style by default. Can set to `system` to match the tooltips used on icons throughout `<zing-grid>`."),
   colClass: z.string()
@@ -480,7 +496,7 @@ export const ZingGridSchema = z.object({
   columnDrag: z.boolean()
     .optional()
     .describe("Enables column dragging"),
-  columnDragAction: z.nativeEnum(ColumnDragActionEnum)
+  columnDragAction: z.enum(ColumnDragActionEnum)
     .optional()
     .describe("Specifies the action of dragging allowed. By default, if `column-drag` is enabled then `column-drag-action` is set `\"both\"`. This property will turn on column-drag if not already set."),
   columnResizable: z.boolean()
@@ -495,7 +511,7 @@ export const ZingGridSchema = z.object({
   columnResizablePersistent: z.boolean()
     .optional()
     .describe("Presence of attribute displays column resizing for all columns without hover"),
-  columnWidth: z.nativeEnum(ColumnWidthEnum).or(z.string().regex(/\d*\.?\d+(px|%)?/)).or(z.number())
+  columnWidth: z.enum(ColumnWidthEnum).or(z.string().regex(/\d*\.?\d+(px|%)?/)).or(z.number())
     .optional()
     .describe("Sets the width each of the columns"),
   columns: z.array(z.object({
@@ -511,7 +527,7 @@ export const ZingGridSchema = z.object({
     buttonBorder: z.enum(CellEditorEnum).or(z.boolean())
       .optional()
       .describe("Presence of attribute forces a border on the button. Setting to `disabled` removes the default border."),
-    cellBreak: z.nativeEnum(CellBreakEnum)
+    cellBreak: z.enum(CellBreakEnum)
       .optional()
       .describe("The type of `word-break` style for body cells. When not set, `cell-break` style is `normal` by default. If the width of a column is set, `cell-break` is `word` by default."),
     cellClass: z.string()
@@ -565,13 +581,13 @@ export const ZingGridSchema = z.object({
     editorTemplate: z.string()
       .optional()
       .describe("Points to an external template element to be used as the template for the column's editor"),
-    filter: z.nativeEnum(FilterEnum).or(z.boolean())
+    filter: z.enum(FilterEnum).or(z.boolean())
       .optional()
-      .describe("Overrides the grid level `filter` attribute. Presence of attribute enables the menu on `filter` column. Can be set to `inline`, `menu`, `both`, or `disabled`"),
-    filterButtons: z.nativeEnum(FilterButtonsEnum).or(z.string().regex(/^(reset|close|apply)(,\s?(reset|close|apply))*$/))
+      .describe("Overrides the grid level `filter` attribute. Presence of attribute enables the menu on `filter` column. Can be set to `inline`, `menu`, `summary`, `both`, `all`, a comma-separated combination (e.g. `\"inline,summary\"`), or `disabled`"),
+    filterButtons: z.enum(FilterButtonsEnum).or(z.string().regex(/^(reset|close|apply)(,\s?(reset|close|apply))*$/))
       .optional()
       .describe("Comma separated list of buttons to display on the filter menu"),
-    filterConditions: z.nativeEnum(FilterConditionsEnum).or(z.string())
+    filterConditions: z.enum(FilterConditionsEnum).or(z.string())
       .optional()
       .describe("The list of conditions to present as options in the filter menu condition select. Use \"break\" to display the horizontal separator. Use \"default\" to use the built in default. Can also be any custom string representing a function name."),
     filterConditionsDisplay: z.number()
@@ -589,16 +605,25 @@ export const ZingGridSchema = z.object({
     filterKey: z.string()
       .optional()
       .describe("Sets the key for server side filtering. By default the filterKey is set to the filterIndex value."),
-    filterMenuAreas: z.nativeEnum(FilterMenuAreasEnum)
+    filterMenuAreas: z.enum(FilterMenuAreasEnum)
       .optional()
       .describe("The areas to display in the filter menu. Can be conditions, selectbox, or both"),
-    filterOn: z.nativeEnum(FilterOnEnum)
+    filterOn: z.enum(FilterOnEnum)
       .optional()
       .describe("Determines if the filter comparison should be against the raw values or the rendered This only applies to conditionals in the filter menu. For iframe column type, it is restricted to raw values. For aggregate column type, it is restricted to rendered values."),
     filterSelectboxDisplay: z.enum(FilterOnEnum)
       .optional()
       .describe("Determines if the selectbox in the filter menu should display the values as raw or rendered values."),
-    filterTrigger: z.nativeEnum(FilterTriggerEnum)
+    filterSummaryChart: z.enum(FilterSummaryChartEnum)
+      .optional()
+      .describe("Sets the filter summary chart type"),
+    filterSummaryMultiNode: z.enum(CellEditorEnum)
+      .optional()
+      .describe("Controls whether multiple nodes can be selected simultaneously for bar and pie summary charts."),
+    filterSummaryNodeSort: z.enum(FilterSummaryNodeSortEnum)
+      .optional()
+      .describe("Sets the node sort order for filter summary chart"),
+    filterTrigger: z.enum(FilterTriggerEnum)
       .optional()
       .describe("Action that fires the filter event from the filter menu."),
     filterer: z.string()
@@ -607,7 +632,7 @@ export const ZingGridSchema = z.object({
     footCell: z.enum(AggregateEnum).or(z.string())
       .optional()
       .describe("The aggregate function, tokenized string, or function to evaluate for the foot cell of the column. If using a function, the function takes the parameters `columnData` and `columnFieldIndex`."),
-    frozen: z.nativeEnum(FrozenEnum)
+    frozen: z.enum(FrozenEnum)
       .optional()
       .describe("Moves the column to the frozen panel specified"),
     group: z.boolean()
@@ -625,7 +650,7 @@ export const ZingGridSchema = z.object({
     headerAutoFormat: z.enum(CellEditorEnum).or(z.string())
       .optional()
       .describe("Setting to `disabled` will turn off formatting on the header of the column. By default, headers will convert camel, dash, or kebab case to a properly spaced and capitalized string. Or set to a function name to customize formatting of header text. The custom function takes in two parameters, `index` and `headerText`, and returns the formatted header text."),
-    headerIconPosition: z.nativeEnum(HeaderIconPositionEnum)
+    headerIconPosition: z.enum(HeaderIconPositionEnum)
       .optional()
       .describe("Sets the header icon position in the header cells"),
     headerTooltipAction: z.enum(CellTooltipActionEnum)
@@ -652,7 +677,7 @@ export const ZingGridSchema = z.object({
     headerTooltipText: z.string()
       .optional()
       .describe("Sets the tooltip text for the header cell of the column. Can pass this value to renderer or template if using"),
-    headerTooltipTrigger: z.nativeEnum(HeaderTooltipTriggerEnum)
+    headerTooltipTrigger: z.enum(HeaderTooltipTriggerEnum)
       .optional()
       .describe("Sets what part of the header triggers the tooltip. If set to 'icon', an info icon is added to the header."),
     headerTooltipType: z.enum(CellTooltipTypeEnum)
@@ -718,7 +743,7 @@ export const ZingGridSchema = z.object({
     sorter: z.string()
       .optional()
       .describe("Overrides the default sorter for the column. It is also possible to override the column sorting by passing in method name of sort function instead or setting to `disabled` to disable sorting. Sorter function takes in two values (a, b) and returns 1, -1, or 0 indicating if `a > b`, `a < b`, or `a = b`. Can also be set to a path in the dataset to perform the sort on. This is useful for sorting object indices."),
-    type: z.nativeEnum(TypeEnum)
+    type: z.enum(TypeEnum)
       .optional()
       .describe("The type of the data stored in the column. The column renderer/editor will behave based on the column type."),
     typeAggregateOmit: z.boolean()
@@ -781,13 +806,13 @@ export const ZingGridSchema = z.object({
     typeGroupPlural: z.string()
       .optional()
       .describe("Indicates the word to use if the count is plural or singular. Comma separated with singular first. The word can be referenced by the token `group.plural` and is used in a renderer or template."),
-    typeIframeRatio: z.nativeEnum(TypeIframeRatioEnum)
+    typeIframeRatio: z.enum(TypeIframeRatioEnum)
       .optional()
       .describe("Sets a \"square\" ratio instead of the default \"16:9\""),
     typeImageAlt: z.string()
       .optional()
       .describe("The alternative text used with the `image` type column"),
-    typeImageMask: z.nativeEnum(TypeImageMaskEnum)
+    typeImageMask: z.enum(TypeImageMaskEnum)
       .optional()
       .describe("The alternative shape to mask the image"),
     typeImageSrc: z.string()
@@ -841,7 +866,7 @@ export const ZingGridSchema = z.object({
     typeToggleRenderValue: z.boolean()
       .optional()
       .describe("When the column type is set, the render and value will be the same. This prevents the default creating of true/false for toggles."),
-    typeUrlIcon: z.nativeEnum(TypeUrlIconEnum)
+    typeUrlIcon: z.enum(TypeUrlIconEnum)
       .optional()
       .describe("If the column type is `url`, use this attribute to reference any `<zg-icon>` within the library to replace the link text with this icon."),
     typeUrlSrc: z.string()
@@ -859,7 +884,7 @@ export const ZingGridSchema = z.object({
     validationRequiredMessage: z.string()
       .optional()
       .describe("Sets the validation required message for the column. Overrides any other settings."),
-    width: z.nativeEnum(WidthEnum).or(z.string().regex(/\d*\.?\d+(px|%)?/)).or(z.number())
+    width: z.enum(WidthEnum).or(z.string().regex(/\d*\.?\d+(px|%)?/)).or(z.number())
       .optional()
       .describe("Sets the width of the column. Can also be any custom string representing a percentage value (10%) or pixel value (150px)."),
   }).strict())
@@ -874,13 +899,13 @@ export const ZingGridSchema = z.object({
   confirmDelete: z.enum(CellEditorEnum)
     .optional()
     .describe("Turns off delete confirmation if set to disable"),
-  confirmations: z.nativeEnum(ConfirmationsEnum)
+  confirmations: z.enum(ConfirmationsEnum)
     .optional()
     .describe("Sets which confirmation dialogs to display on batch editing and deleting"),
   contextMenu: z.string().or(z.boolean())
     .optional()
     .describe("Enables the default `<zing-grid>` context menu or set to the id name of a custom `<zg-menu>`. If set to a custom menu and `<zg-menu>` has the `replace` attribute present, then the custom menu will replace the context menu. Otherwise the contents of the custom menu is appended to the end of context menu. Can also set to `\"browser\"` to use the browser's built in context-menu Note that the `\"browser\"` context-menu cannot be used together with a custom static-menu."),
-  creator: z.nativeEnum(CreatorEnum).or(z.boolean())
+  creator: z.enum(CreatorEnum).or(z.boolean())
     .optional()
     .describe("Sets the create editor to modal (default) or inline."),
   data: z.array(z.any()).or(z.record(z.string(), z.any()))
@@ -892,13 +917,13 @@ export const ZingGridSchema = z.object({
   dialog: z.boolean()
     .optional()
     .describe("Sets `<zg-dialog>` to display dialog and mask within the grid dimensions instead of the whole screen"),
-  dir: z.nativeEnum(DirEnum)
+  dir: z.enum(DirEnum)
     .optional()
     .describe("The HTML standard direction to indicate direction of grid's columns and text"),
-  editor: z.nativeEnum(EditorEnum).or(z.boolean())
+  editor: z.enum(EditorEnum).or(z.boolean())
     .optional()
     .describe("Turns on the grid editor. Enables single cell editing via double click. Sets the editor to inline (default) or modal."),
-  editorControls: z.nativeEnum(EditorControlsEnum).or(z.boolean())
+  editorControls: z.enum(EditorControlsEnum).or(z.boolean())
     .optional()
     .describe("Adds columns for the editor controls. If it is added, default is \"all\"."),
   editorDisabledFields: z.string()
@@ -906,7 +931,7 @@ export const ZingGridSchema = z.object({
     .describe("Comma separated list of indexes to turn off editor functionality on. Mimes the functionality of [\"editor=disabled\"] on `<zg-column>`"),
   filter: z.enum(FilterEnum).or(z.boolean())
     .optional()
-    .describe("Enables filtering for all columns. Can be turned on/off individually via column. Can be set to \"inline\" or \"menu\" Default is \"menu\""),
+    .describe("Enables filtering for all columns. Can be turned on/off individually via column. Can be set to \"inline\", \"menu\", \"summary\", \"both\", \"all\", a comma-separated combination (e.g. \"inline,summary\"), or \"disabled\". Default is \"menu\""),
   filterButtons: z.enum(FilterButtonsEnum).or(z.string().regex(/^(reset|close|apply)(,\s?(reset|close|apply))*$/))
     .optional()
     .describe("Comma separated list of buttons to display in the specified order on the filter menu"),
@@ -931,6 +956,15 @@ export const ZingGridSchema = z.object({
   filterSelectboxDisplay: z.enum(FilterOnEnum)
     .optional()
     .describe("Determines if the selectbox in the filter menu should display the values as raw or rendered values."),
+  filterSummaryChart: z.enum(FilterSummaryChartEnum)
+    .optional()
+    .describe("Sets the filter summary chart type"),
+  filterSummaryMultiNode: z.enum(CellEditorEnum)
+    .optional()
+    .describe("Controls whether multiple nodes can be selected simultaneously for bar and pie summary charts."),
+  filterSummaryNodeSort: z.enum(FilterSummaryNodeSortEnum)
+    .optional()
+    .describe("Sets the node sort order for filter summary chart"),
   filterTrigger: z.enum(FilterTriggerEnum)
     .optional()
     .describe("Action that fires the filter event from the filter menu."),
@@ -952,7 +986,7 @@ export const ZingGridSchema = z.object({
   frozenRowsTop: z.number()
     .optional()
     .describe("Sets the number of rows to freeze to the top"),
-  gridlines: z.nativeEnum(GridlinesEnum)
+  gridlines: z.enum(GridlinesEnum)
     .optional()
     .describe("Sets vertical, horizontal or both grid lines to the grid when in row mode"),
   groupBy: z.string()
@@ -1003,7 +1037,7 @@ export const ZingGridSchema = z.object({
   lang: z.string()
     .optional()
     .describe("Sets the language to use for the grid"),
-  layout: z.nativeEnum(LayoutEnum)
+  layout: z.enum(LayoutEnum)
     .optional()
     .describe("Sets the grid layout to be either `card` or `row` and adds `<zg-layout-controls>` to the grid. The default is based on the size of the user's screen, unless `layout` is set."),
   layoutControls: z.enum(CellEditorEnum).or(z.boolean())
@@ -1018,7 +1052,7 @@ export const ZingGridSchema = z.object({
   loadmask: z.enum(CellEditorEnum)
     .optional()
     .describe("Set `loadmask=\"disabled\"` to prevent the `<zg-load-mask>` from showing on data load."),
-  nestedDataSeparator: z.nativeEnum(NestedDataSeparatorEnum).or(z.string())
+  nestedDataSeparator: z.enum(NestedDataSeparatorEnum).or(z.string())
     .optional()
     .describe("Indicates separator that should be used for nested headers and data paths. By default, the '.' is used: 'fullName.first' Setting to `disabled` will turn off parsing for nested headers and will not look at pathing for data"),
   noData: z.string()
@@ -1042,14 +1076,14 @@ export const ZingGridSchema = z.object({
   pagerButtonLimit: z.number()
     .optional()
     .describe("Determines max number of page buttons to display. Default is 5."),
-  pagerPosition: z.nativeEnum(PagerPositionEnum)
+  pagerPosition: z.enum(PagerPositionEnum)
     .optional()
     .describe("Sets pager position. Note: `pager` attribute or `<zg-pager>` must be present in order to position pager."),
-  pagerType: z.nativeEnum(PagerTypeEnum)
+  pagerType: z.enum(PagerTypeEnum)
     .optional()
     .describe("Determines which type of pagination to use, input or buttons"),
   params: z.array(z.object({
-    name: z.nativeEnum(ZGParamEnum)
+    name: z.enum(ZGParamEnum)
       .describe("Name of parameter"),
     value: z.string()
       .describe("The value for given data key. If the value is an object, format as JSON encoded version of string."),
@@ -1086,10 +1120,10 @@ export const ZingGridSchema = z.object({
   rowDetailsTemplate: z.string()
     .optional()
     .describe("Points to an external template element to be used as the template for the row's details"),
-  rowHeight: z.nativeEnum(RowHeightEnum).or(z.string().regex(/\d+px/)).or(z.number())
+  rowHeight: z.enum(RowHeightEnum).or(z.string().regex(/\d+px/)).or(z.number())
     .optional()
     .describe("Sets the height of each data row. By default, the body row height is set to 'auto' where it will auto fit the content. If you wish to apply the height to rows besides data row, specify with the `[rowHeightScope]` attribute."),
-  rowHeightScope: z.nativeEnum(RowHeightScopeEnum)
+  rowHeightScope: z.enum(RowHeightScopeEnum)
     .optional()
     .describe("If `[rowHeight]` is set, it specifies which rows to apply row height to. Choices are `data`, `headers, and `all`. Can combine with comma separated list"),
   rowSelector: z.boolean()
@@ -1128,7 +1162,7 @@ export const ZingGridSchema = z.object({
   statusPersist: z.boolean()
     .optional()
     .describe("Prevents status messages from automatically closing after a delay"),
-  statusPosition: z.nativeEnum(StatusPositionEnum)
+  statusPosition: z.enum(StatusPositionEnum)
     .optional()
     .describe("Positions the status message in one of nine positions relative to the grid"),
   templateEndDelimiter: z.string()
@@ -1137,7 +1171,7 @@ export const ZingGridSchema = z.object({
   templateStartDelimiter: z.string()
     .optional()
     .describe("Defines the regex expression for starting data binding"),
-  theme: z.nativeEnum(ThemeEnum).or(z.string())
+  theme: z.enum(ThemeEnum).or(z.string())
     .optional()
     .describe("Sets the theme of the grid. Built-in themes are specified by keyword, but custom theme names are also accepted by setting a URL path to your custom css theme file. For custom themes, on load set `theme` to the path to the custom theme file. After, set to theme name to switch themes."),
   typeSelectorPagePersist: z.boolean()
