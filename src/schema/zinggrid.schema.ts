@@ -271,6 +271,11 @@ enum EditorControlsEnum {
   remover = "remover",
 }
 
+enum FilterSummaryModeEnum {
+  cumulative = "cumulative",
+  exclusive = "exclusive",
+}
+
 enum GridlinesEnum {
   both = "both",
   horz = "horz",
@@ -959,12 +964,18 @@ export const ZingGridSchema = z.object({
   filterSummaryChart: z.enum(FilterSummaryChartEnum)
     .optional()
     .describe("Sets the filter summary chart type"),
+  filterSummaryMode: z.enum(FilterSummaryModeEnum)
+    .optional()
+    .describe("Controls whether applying a filter summary in one column clears the active filter summary in other columns."),
   filterSummaryMultiNode: z.enum(CellEditorEnum)
     .optional()
     .describe("Controls whether multiple nodes can be selected simultaneously for bar and pie summary charts."),
   filterSummaryNodeSort: z.enum(FilterSummaryNodeSortEnum)
     .optional()
     .describe("Sets the node sort order for filter summary chart"),
+  filterSummaryRowCollapsed: z.boolean()
+    .optional()
+    .describe("Controls whether the filter summary row starts collapsed."),
   filterTrigger: z.enum(FilterTriggerEnum)
     .optional()
     .describe("Action that fires the filter event from the filter menu."),
