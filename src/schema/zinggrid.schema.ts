@@ -14,6 +14,19 @@ enum AlignEnum {
   right = "right",
 }
 
+enum CardResizableEnum {
+  responsive = "responsive",
+  fixed = "fixed",
+}
+
+enum CardResizableResponsiveEnum {
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+}
+
 enum CellBreakEnum {
   all = "all",
   ellipsis = "ellipsis",
@@ -97,6 +110,12 @@ enum ColumnWidthEnum {
   stretch = "stretch",
 }
 
+enum CardDensityBreakpointEnum {
+  mobile = "mobile",
+  tablet = "tablet",
+  desktop = "desktop",
+}
+
 enum FilterEnum {
   menu = "menu",
   inline = "inline",
@@ -154,13 +173,17 @@ enum FilterOnEnum {
 enum FilterSummaryChartEnum {
   bar = "bar",
   default = "default",
+  calendar = "calendar",
   histogram = "histogram",
   pie = "pie",
+  ring = "ring",
+  toggle = "toggle",
 }
 
 enum FilterSummaryNodeSortEnum {
   alphabetical = "alphabetical",
-  ''count' = "'count",
+  count = "count",
+  gradient = "gradient",
   value = "value",
   none = "none",
 }
@@ -228,6 +251,11 @@ enum TypeImageMaskEnum {
   circle = "circle",
 }
 
+enum TypeRowDetailsCardModeEnum {
+  bottom = "bottom",
+  sidebar = "sidebar",
+}
+
 enum TypeUrlIconEnum {
   link = "link",
   outsidearrow = "outsidearrow",
@@ -269,6 +297,11 @@ enum EditorControlsEnum {
   creator = "creator",
   editor = "editor",
   remover = "remover",
+}
+
+enum FilterSummaryModeEnum {
+  cumulative = "cumulative",
+  exclusive = "exclusive",
 }
 
 enum GridlinesEnum {
@@ -388,6 +421,12 @@ enum ZGParamEnum {
   dataType = "dataType",
   urlSuffix = "urlSuffix",
   mode = "mode",
+  resetOnDataChange = "resetOnDataChange",
+}
+
+enum RowDetailsCardSidebarBoundaryEnum {
+  grid = "grid",
+  page = "page",
 }
 
 enum RowHeightEnum {
@@ -457,6 +496,21 @@ export const ZingGridSchema = z.object({
     .strict()
     .optional()
     .describe("Specifies the defined `<zg-card>` of the grid. More appropriate to use `<zg-card>` in most cases or set the property programmatically."),
+  cardResizable: z.enum(CardResizableEnum).or(z.any())
+    .optional()
+    .describe("Enables resizing of cards in card mode. Presence of the attribute sizes cards responsively, within a Min/Max cards-per-row range. The \"fixed\" sizes cards to a single fixed cards-per-row count instead."),
+  cardResizableFixed: z.number()
+    .optional()
+    .describe("Sets the value of \"Fixed\" cards-per-row. The slider itself always spans 1-6; this only seeds its starting value - dragging it afterwards overrides this. Only applies when `[card-resizable]` is in \"fixed\" mode."),
+  cardResizableResponsive: z.enum(CardResizableResponsiveEnum)
+    .optional()
+    .describe("Sets value of \"Card Size Scale\". Only applies when `[card-resizable]` is in \"responsive\" mode."),
+  cardResizableResponsiveMax: z.number()
+    .optional()
+    .describe("Sets the value of \"Card Range\". Accepts a number between 1-6. Only applies when `[card-resizable]` is in \"responsive\" mode."),
+  cardResizableResponsiveMin: z.number()
+    .optional()
+    .describe("Sets the value of \"Card Range\". Accepts a number between 1-6. Only applies when `[card-resizable]` is in \"responsive\" mode."),
   cellBreak: z.enum(CellBreakEnum)
     .optional()
     .describe("The type of `word-break` style for body cells. When not set, `cell-break` style is `normal` by default. If the width of a column is set, `cell-break` is `word` by default. To overwrite `cell-break` for cells in a specific column, set `cell-break` for that column."),
@@ -495,10 +549,13 @@ export const ZingGridSchema = z.object({
     .describe("Adds a class to each `<zg-cell>` in targeted `<zg-column>`. To apply a class conditionally, set the value to the name of the function to run on each cell value. The function takes the parameters `fieldIndex`, `domContainer`, and `colObject`, and returns a string which is the class name to apply."),
   columnDrag: z.boolean()
     .optional()
-    .describe("Enables column dragging"),
+    .describe("Enables column dragging. In card mode, enables dragging card items."),
   columnDragAction: z.enum(ColumnDragActionEnum)
     .optional()
     .describe("Specifies the action of dragging allowed. By default, if `column-drag` is enabled then `column-drag-action` is set `\"both\"`. This property will turn on column-drag if not already set."),
+  columnDragPersistent: z.boolean()
+    .optional()
+    .describe("Presence of attribute displays the column drag icon for all columns without hover"),
   columnResizable: z.boolean()
     .optional()
     .describe("Presence of attribute turns on column resizing for all columns. This excludes internal column types (), which requires setting ZGColumn[resizable] on the column."),
@@ -527,6 +584,9 @@ export const ZingGridSchema = z.object({
     buttonBorder: z.enum(CellEditorEnum).or(z.boolean())
       .optional()
       .describe("Presence of attribute forces a border on the button. Setting to `disabled` removes the default border."),
+    cardDensityBreakpoint: z.enum(CardDensityBreakpointEnum).or(z.number()).or(z.string())
+      .optional()
+      .describe("Sets the minimum `[viewport]` tier at which this card field is visible; it hides below that tier and shows at it and every larger one. Fields without a `card-density-breakpoint` are always visible. Fields sharing the same value show/hide together. If `zing-grid:viewportTypes` is set, its custom breakpoint labels replace the 5 built-in ones entirely, and the shorthand rank numbers follow their order from smallest to largest instead."),
     cellBreak: z.enum(CellBreakEnum)
       .optional()
       .describe("The type of `word-break` style for body cells. When not set, `cell-break` style is `normal` by default. If the width of a column is set, `cell-break` is `word` by default."),
@@ -575,6 +635,9 @@ export const ZingGridSchema = z.object({
     drag: z.enum(CellEditorEnum)
       .optional()
       .describe("Disables the drag state of a specific column when `column-drag` enabled on `<zing-grid>`"),
+    dragPersistent: z.enum(CellEditorEnum).or(z.boolean())
+      .optional()
+      .describe("Presence of attribute displays the column drag icon without hover. Set to `disabled` to override setting on `<zing-grid>`."),
     editor: z.boolean().or(z.string())
       .optional()
       .describe("Overrides the default editor for the column. Can be set to a different built-in editor (based on type of column), custom editor, or `false` to turn off editor. If set to a custom editor, the attribute value should be set to the name of the object. See \"Features\" page on \"Editing: Custom Editor Grid\" for more details on custom editor."),
@@ -616,13 +679,19 @@ export const ZingGridSchema = z.object({
       .describe("Determines if the selectbox in the filter menu should display the values as raw or rendered values."),
     filterSummaryChart: z.enum(FilterSummaryChartEnum)
       .optional()
-      .describe("Sets the filter summary chart type"),
+      .describe("Sets the filter summary chart type. When a chart (bar, pie, or ring) can't render because it has too many nodes, it calls back to `histogram`."),
+    filterSummaryLens: z.enum(CellEditorEnum).or(z.boolean())
+      .optional()
+      .describe("Adds a lens icon to each filter summary chart. When clicked, an overlay displays a larger, fully interactive version of the chart for easier viewing and filtering. Or set to \"disabled\" to disable for this column only."),
     filterSummaryMultiNode: z.enum(CellEditorEnum)
       .optional()
       .describe("Controls whether multiple nodes can be selected simultaneously for bar and pie summary charts."),
     filterSummaryNodeSort: z.enum(FilterSummaryNodeSortEnum)
       .optional()
       .describe("Sets the node sort order for filter summary chart"),
+    filterSummaryRingThickness: z.number()
+      .optional()
+      .describe("Sets the ring thickness for filter-summary-chart=\"ring\" on this column (0–1, default 0.5)."),
     filterTrigger: z.enum(FilterTriggerEnum)
       .optional()
       .describe("Action that fires the filter event from the filter menu."),
@@ -842,6 +911,9 @@ export const ZingGridSchema = z.object({
     typeRangeStep: z.number()
       .optional()
       .describe("Specifies the step between each legal value for the input box. Used with `range` type column in edit mode."),
+    typeRowDetailsCardMode: z.enum(TypeRowDetailsCardModeEnum)
+      .optional()
+      .describe("Sets how the row details open in card mode. `bottom` opens the details inside the card itself and allows multiple cards to be open at once. `sidebar` opens a shared drawer on the right side of the grid, showing one card's details at a time."),
     typeRowDetailsRenderer: z.string()
       .optional()
       .describe("Renderer for the row details component To use a custom renderer, the attribute should be set to the name of the function. The renderer function takes in the following arguments, `recordData`, `domRowDetails`, and `rowObject` The returned value of the renderer function is set as the innerHTML of the zg-row-details component."),
@@ -884,6 +956,9 @@ export const ZingGridSchema = z.object({
     validationRequiredMessage: z.string()
       .optional()
       .describe("Sets the validation required message for the column. Overrides any other settings."),
+    validator: z.string()
+      .optional()
+      .describe("Sets the validation method for the column. Overrides the default for the column type"),
     width: z.enum(WidthEnum).or(z.string().regex(/\d*\.?\d+(px|%)?/)).or(z.number())
       .optional()
       .describe("Sets the width of the column. Can also be any custom string representing a percentage value (10%) or pixel value (150px)."),
@@ -958,19 +1033,37 @@ export const ZingGridSchema = z.object({
     .describe("Determines if the selectbox in the filter menu should display the values as raw or rendered values."),
   filterSummaryChart: z.enum(FilterSummaryChartEnum)
     .optional()
-    .describe("Sets the filter summary chart type"),
+    .describe("Sets the filter summary chart type. When a chart (bar, pie, or ring) can't render because it has too many nodes, it calls back to `histogram`."),
+  filterSummaryLens: z.boolean()
+    .optional()
+    .describe("Adds a lens icon to each filter summary chart. When clicked, an overlay displays a larger, fully interactive version of the chart for easier viewing and filtering."),
+  filterSummaryMode: z.enum(FilterSummaryModeEnum)
+    .optional()
+    .describe("Controls whether applying a filter summary in one column clears the active filter summary in other columns."),
   filterSummaryMultiNode: z.enum(CellEditorEnum)
     .optional()
     .describe("Controls whether multiple nodes can be selected simultaneously for bar and pie summary charts."),
   filterSummaryNodeSort: z.enum(FilterSummaryNodeSortEnum)
     .optional()
     .describe("Sets the node sort order for filter summary chart"),
+  filterSummaryRingThickness: z.number()
+    .optional()
+    .describe("Sets the ring thickness for filter-summary-chart=\"ring\" (0–1, default 0.5)"),
+  filterSummaryRowCollapsed: z.boolean()
+    .optional()
+    .describe("Controls whether the filter summary row starts collapsed."),
   filterTrigger: z.enum(FilterTriggerEnum)
     .optional()
     .describe("Action that fires the filter event from the filter menu."),
   footClass: z.string()
     .optional()
     .describe("Adds a class to each `<zg-cell>` in the `<zg-foot>`. To apply a class conditionally, set the value to the name of the function to run on each cell value. The function takes the parameters `fieldIndex`, `domContainer`, and `colObject`, and returns a string which is the class name to apply."),
+  frozenCardsBottom: z.number()
+    .optional()
+    .describe("Sets the number of cards to freeze to the bottom"),
+  frozenCardsTop: z.number()
+    .optional()
+    .describe("Sets the number of cards to freeze to the top"),
   frozenColumnsLeft: z.number()
     .optional()
     .describe("Sets the number of columns to freeze to the left"),
@@ -988,7 +1081,7 @@ export const ZingGridSchema = z.object({
     .describe("Sets the number of rows to freeze to the top"),
   gridlines: z.enum(GridlinesEnum)
     .optional()
-    .describe("Sets vertical, horizontal or both grid lines to the grid when in row mode"),
+    .describe("Sets vertical, horizontal or both grid lines to the grid when in row mode. In card mode, sets horizontal lines between card items."),
   groupBy: z.string()
     .optional()
     .describe("Sets the index fields to group on."),
@@ -1098,7 +1191,7 @@ export const ZingGridSchema = z.object({
     .describe("The method to call when state is ready to be retrieved. Must also set preserveStateSave and preserveStateId"),
   preserveStateOptions: z.string()
     .optional()
-    .describe("Comma separated list of features to save in state preservation. Options are 'columnfrozen', 'columnposition', 'columnvisibility', 'columnwidth', 'filter', 'rowgroup', 'layout', 'page', 'pagesize', 'rowfrozen', 'rowgroup', 'rowselector', 'search', 'selector', 'sort' NOTE: If columnfrozen is set, then columnposition will implicitly be set as well"),
+    .describe("Comma separated list of features to save in state preservation. Options are 'cardresize', 'columnfrozen', 'columnposition', 'columnvisibility', 'columnwidth', 'filter', 'rowgroup', 'layout', 'page', 'pagesize', 'rowfrozen', 'rowgroup', 'rowselector', 'search', 'selector', 'sort' NOTE: If columnfrozen is set, then columnposition will implicitly be set as well"),
   preserveStateSave: z.string()
     .optional()
     .describe("The method to call when state is ready to be saved. Must also set preserveStateLoad and preserveStateId."),
@@ -1114,6 +1207,12 @@ export const ZingGridSchema = z.object({
   rowClass: z.string()
     .optional()
     .describe("Adds a class to each `<zg-row>` element. To apply a class conditionally, set the value to the name of the function to run on each cell value. The function takes the parameters `data`, `rowIndex` (1-based), `domRow`, and `rowObject`, `rowParent`, `bodyRowIndex` (1 based), and returns a string which is the class name to apply."),
+  rowDetailsCardMode: z.enum(TypeRowDetailsCardModeEnum)
+    .optional()
+    .describe("Sets how the row details open in card mode. `bottom` opens the details inside the card itself and allows multiple cards to be open at once. `sidebar` opens a shared drawer on the right side of the grid, showing one card's details at a time."),
+  rowDetailsCardSidebarBoundary: z.enum(RowDetailsCardSidebarBoundaryEnum)
+    .optional()
+    .describe("Sets what bounds the row details drawer opened by `[row-details-card-mode=\"sidebar\"]`. `grid` contains the drawer within the grid's dimensions. `page` contains it within the width of the page instead."),
   rowDetailsRenderer: z.string()
     .optional()
     .describe("Renderer for the row details component To use a custom renderer, the attribute should be set to the name of the function. The renderer function takes in the following arguments, `recordData`, `domRowDetails`, and `rowObject` The returned value of the renderer function is set as the innerHTML of the zg-row-details component."),
