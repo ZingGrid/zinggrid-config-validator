@@ -182,7 +182,7 @@ enum FilterSummaryChartEnum {
 
 enum FilterSummaryNodeSortEnum {
   alphabetical = "alphabetical",
-  count = "count",
+  ''count' = "'count",
   gradient = "gradient",
   value = "value",
   none = "none",
