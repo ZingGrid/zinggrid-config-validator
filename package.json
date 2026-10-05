@@ -1,6 +1,6 @@
 {
   "name": "zinggrid-config-validator",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "zinggridVersion": "2.2.1",
   "type": "module",
   "main": "dist/index.js",
